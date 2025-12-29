@@ -13,11 +13,11 @@ export default function Profile() {
         <div className="profile-info">
           <h3>Gubbala Charan</h3>
           <p>Associate Software Engineer Intern | MCA Graduate</p>
-          <p>React.js • FastAPI • Python • ML</p>
-          <p className="small">📍 West Godavari, India</p>
+          <p>React.js • Django • Python • ML</p>
+          <p className="small">📍Narsapur, West Godavari,Andhra Pradesh,India</p>
           
           {/* Social Links */}
-          <div className="flex gap-4 mt-5 justify-center">
+          <div className="flex gap-5 mt-5 justify-center">
             <a href="mailto:nameischaran4@gmail.com" className="social-icon bg-white text-[#333] w-10 h-10 rounded-full flex items-center justify-center text-xl no-underline transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.15)] border-2 border-[#333]">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -36,13 +36,13 @@ export default function Profile() {
           </div>
 
           {/* Quick Stats */}
-          <div className="flex flex-col gap-4 mt-8 text-center">
+          <div className="flex flex-col gap-2 mt-8 text-center">
             <div>
               <div className="text-[1.8rem] font-bold text-accent-primary leading-none">6+</div>
               <div className="text-[0.85rem] text-text-secondary">Projects</div>
             </div>
             <div>
-              <div className="text-[1.8rem] font-bold text-accent-secondary leading-none">2</div>
+              <div className="text-[1.8rem] font-bold text-accent-secondary leading-none">3</div>
               <div className="text-[0.85rem] text-text-secondary">Internships</div>
             </div>
             <div>

@@ -1,6 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function Footer() {
+  useEffect(() => {
+    // Handle smooth scrolling with proper offset for sections
+    const handleFooterClick = (e) => {
+      const href = e.target.getAttribute('href');
+      
+      // Only handle internal anchor links
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          const navHeight = 64; // --nav-height value
+          const offset = navHeight + 32; // Additional spacing for visibility
+          
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    };
+
+    // Attach click handlers to all footer links
+    const footerLinks = document.querySelectorAll('.footer-links a[href^="#"]');
+    footerLinks.forEach(link => {
+      link.addEventListener('click', handleFooterClick);
+    });
+
+    // Cleanup
+    return () => {
+      footerLinks.forEach(link => {
+        link.removeEventListener('click', handleFooterClick);
+      });
+    };
+  }, []);
+
   return (
     <footer className="footer">
       <div className="container">

@@ -102,7 +102,7 @@ export default function Contact() {
               </div>
               <div>
                 <div className="font-semibold text-text-primary">Location</div>
-                <div className="text-text-secondary">West Godavari, India</div>
+                <div className="text-text-secondary"> Narsapur, West Godavari, Andhra Pradesh, India</div>
               </div>
             </div>
             

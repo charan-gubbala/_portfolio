@@ -13,7 +13,7 @@ export default function Hero() {
             Associate Software Engineer Intern | MCA Graduate
           </p>
           <p className="text-[1.1rem] mb-8 max-w-[600px]">
-            I specialize in building modern web applications using React.js and FastAPI, 
+            I specialize in building modern web applications using React.js and Django, 
             and developing innovative AI solutions including text-to-image generation and 
             machine learning models. Passionate about creating technology that makes a real impact.
           </p>

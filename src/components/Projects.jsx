@@ -13,7 +13,7 @@ const projects = [
     title: ' E-Commerce Web Application',
     desc: 'Complete e-commerce solution with modern UI, secure payment integration, and admin dashboard. Implemented user authentication, product catalog, cart, and order management with CRUD operations.',
     tech: ['React', 'FastAPI', 'MySQL',],
-    features: ['Secure payment processing', 'CRUD Operations', 'Admin dashboard', 'Product catalog'],
+    features: ['JWT Authentication', 'CRUD Operations', 'Admin dashboard', 'Product catalog'],
     github: 'https://github.com/charan-gubbala/E-commerce.git',
     demo: '#'
   },
