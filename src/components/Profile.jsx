@@ -36,18 +36,18 @@ export default function Profile() {
           </div>
 
           {/* Quick Stats */}
-          <div className="flex flex-col gap-2 mt-8 text-center">
-            <div>
-              <div className="text-[1.8rem] font-bold text-accent-primary leading-none">6+</div>
-              <div className="text-[0.85rem] text-text-secondary">Projects</div>
+          <div className="profile-stats">
+            <div className="profile-stat-item">
+              <div className="profile-stat-number text-accent-primary">6+</div>
+              <div className="profile-stat-label">Projects</div>
             </div>
-            <div>
-              <div className="text-[1.8rem] font-bold text-accent-secondary leading-none">3</div>
-              <div className="text-[0.85rem] text-text-secondary">Internships</div>
+            <div className="profile-stat-item">
+              <div className="profile-stat-number text-accent-secondary">3</div>
+              <div className="profile-stat-label">Internships</div>
             </div>
-            <div>
-              <div className="text-[1.8rem] font-bold text-accent-tertiary leading-none">15+</div>
-              <div className="text-[0.85rem] text-text-secondary">Technologies</div>
+            <div className="profile-stat-item">
+              <div className="profile-stat-number text-accent-tertiary">15+</div>
+              <div className="profile-stat-label">Technologies</div>
             </div>
           </div>
         </div>

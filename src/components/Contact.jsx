@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
 
 export default function Contact() {
   // Set your public contact info here. Leave phone empty to hide it.
@@ -9,6 +10,24 @@ export default function Contact() {
     phone: '' // e.g., '+91-9XXXXXXXXX' (rendered only if not empty)
   };
 
+  // ============================================
+  // EmailJS Configuration
+  // ============================================
+  // These values are loaded from .env file in the root 'port' directory
+  // 
+  // To configure:
+  // 1. Open: port/.env file
+  // 2. Replace the placeholder values with your actual EmailJS keys:
+  //    - VITE_EMAILJS_SERVICE_ID=your_service_id_here
+  //    - VITE_EMAILJS_TEMPLATE_ID=your_template_id_here  
+  //    - VITE_EMAILJS_PUBLIC_KEY=your_public_key_here
+  // 3. Get your keys from: https://www.emailjs.com/
+  // 4. Restart dev server after updating .env file
+  // ============================================
+  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;      // ← Loads from .env file
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;     // ← Loads from .env file
+  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;       // ← Loads from .env file
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,32 +35,281 @@ export default function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Initialize EmailJS with Public Key (loaded from .env file)
+  useEffect(() => {
+    if (EMAILJS_PUBLIC_KEY) {
+      emailjs.init(EMAILJS_PUBLIC_KEY);  // ← Uses EMAILJS_PUBLIC_KEY from .env
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error message when user starts typing
+    if (errorMessage) setErrorMessage('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
+    setErrorMessage('');
+    setSubmitStatus('');
+
+    // Check if EmailJS is configured (all keys must be in .env file)
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
       setIsSubmitting(false);
-      setSubmitStatus('success');
+      setErrorMessage('Email service not configured. Please contact me directly at ' + CONTACT.email);
+      setSubmitStatus('error');
+      return;
+    }
+
+    try {
+      // Send email using EmailJS
+      // All three keys are used here (loaded from .env file):
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,      // ← Service ID from .env (e.g., "service_abc123")
+        EMAILJS_TEMPLATE_ID,     // ← Template ID from .env (e.g., "template_xyz789")
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: CONTACT.email,
+        },
+        EMAILJS_PUBLIC_KEY       // ← Public Key from .env (e.g., "user_abcdefghijklmnop")
+      );
+
+      console.log('Email sent successfully:', result);
+      
+      // Success - Show popup modal
+      setIsSubmitting(false);
+      setShowSuccessModal(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
       
-      // Reset status after 3 seconds
-      setTimeout(() => setSubmitStatus(''), 3000);
-    }, 2000);
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setIsSubmitting(false);
+      
+      // Provide user-friendly error message
+      let errorMsg = 'Failed to send message. ';
+      if (error.text) {
+        errorMsg += error.text + '. ';
+      }
+      errorMsg += `Please try again or contact me directly at ${CONTACT.email}`;
+      
+      setErrorMessage(errorMsg);
+    }
+  };
+
+  const closeModal = () => {
+    setShowSuccessModal(false);
   };
 
   return (
-    <section id="contact" className="card">
+    <>
+      {/* Success Popup Modal */}
+      {showSuccessModal && (
+        <div 
+          className="modal-overlay"
+          onClick={closeModal}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            padding: '20px',
+            animation: 'fadeIn 0.3s ease-in-out'
+          }}
+        >
+          <div 
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
+              borderRadius: '16px',
+              padding: '40px',
+              maxWidth: '500px',
+              width: '100%',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              border: '2px solid #facc15',
+              position: 'relative',
+              animation: 'slideUp 0.3s ease-out'
+            }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'transparent',
+                border: 'none',
+                color: '#9ca3af',
+                fontSize: '24px',
+                cursor: 'pointer',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(250, 204, 21, 0.1)';
+                e.target.style.color = '#facc15';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.color = '#9ca3af';
+              }}
+            >
+              ×
+            </button>
+
+            {/* Success Icon */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #facc15 0%, #fbbf24 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                boxShadow: '0 8px 20px rgba(250, 204, 21, 0.3)'
+              }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#1f2937' }}>
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <h2 style={{
+              color: '#facc15',
+              fontSize: '28px',
+              fontWeight: '600',
+              textAlign: 'center',
+              margin: '0 0 15px 0',
+              lineHeight: '1.2'
+            }}>
+              Thank You! 🎉
+            </h2>
+
+            <p style={{
+              color: '#d1d5db',
+              fontSize: '16px',
+              textAlign: 'center',
+              margin: '0 0 20px 0',
+              lineHeight: '1.6'
+            }}>
+              Thank you for reaching out to me!
+            </p>
+
+            <div style={{
+              background: 'rgba(250, 204, 21, 0.1)',
+              border: '1px solid rgba(250, 204, 21, 0.3)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '25px'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '10px'
+              }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: 'rgba(250, 204, 21, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </div>
+                <div>
+                  <p style={{
+                    color: '#facc15',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    margin: 0
+                  }}>
+                    Email Confirmation
+                  </p>
+                  <p style={{
+                    color: '#9ca3af',
+                    fontSize: '13px',
+                    margin: '4px 0 0 0'
+                  }}>
+                    Your message has been sent successfully!
+                  </p>
+                </div>
+              </div>
+              <p style={{
+                color: '#d1d5db',
+                fontSize: '14px',
+                margin: '10px 0 0 0',
+                lineHeight: '1.5'
+              }}>
+                I've received your message and will get back to you as soon as possible. You should receive a confirmation email shortly.
+              </p>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: 'linear-gradient(135deg, #facc15 0%, #fbbf24 100%)',
+                color: '#1f2937',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: '0 4px 12px rgba(250, 204, 21, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(250, 204, 21, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(250, 204, 21, 0.3)';
+              }}
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
+
+      <section id="contact" className="card">
       <h2>Get In Touch</h2>
       <p className="text-text-secondary mb-8 text-[1.1rem]">
         I'm always interested in new opportunities and exciting projects. Whether you have a question, 
@@ -211,14 +479,37 @@ export default function Contact() {
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
             
-            {submitStatus === 'success' && (
-              <div className="text-accent-tertiary text-center mt-4 p-3 bg-cyan-500/10 rounded-full border border-accent-tertiary">
-                ✅ Message sent successfully! I'll get back to you soon.
+            {errorMessage && (
+              <div className="text-red-400 text-center mt-4 p-3 bg-red-500/10 rounded-full border border-red-400/50">
+                ❌ {errorMessage}
               </div>
             )}
           </form>
         </div>
       </div>
     </section>
+
+    <style>{`
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    `}</style>
+    </>
   );
 }

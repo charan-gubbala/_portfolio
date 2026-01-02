@@ -59,7 +59,24 @@ export default function Footer() {
             <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
             <a href="#contact">Contact</a>
-            <a href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer">Resume</a>
+            <a 
+              href={`${import.meta.env.BASE_URL}charan_res.pdf`} 
+              onClick={(e) => {
+                e.preventDefault();
+                const resumeUrl = `${import.meta.env.BASE_URL}charan_res.pdf`;
+                window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+                const link = document.createElement('a');
+                link.href = resumeUrl;
+                link.download = 'Charan_Gubbala_Resume.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              target="_blank" 
+              rel="noreferrer"
+            >
+              Resume
+            </a>
           </div>
         </div>
         

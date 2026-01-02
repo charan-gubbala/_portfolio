@@ -24,7 +24,7 @@ export default function Skills() {
   return (
     <section id="skills" className="card">
       <h2>Technical Skills</h2>
-      {/* Category cards in 4-column grid */}
+      {/* Category cards in 4-column grid - single row */}
       <div className="skill-grid">
         {skillCategories.map((category, index) => (
           <div key={index} className="skill-category">

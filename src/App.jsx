@@ -12,7 +12,7 @@ import "./styles/styles.css"; // Import global styles
 
 export default function App() {
   return (
-    <>
+   <div className="gap-[5rem]"><>
       {/* Navigation Bar */}
       <Navbar />
 
@@ -48,5 +48,6 @@ export default function App() {
       {/* Footer */}
       <Footer />
     </>
+    </div>
   );
 }
